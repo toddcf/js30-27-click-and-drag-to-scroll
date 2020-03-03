@@ -36,48 +36,53 @@
 
     <script>
 
-        const slider = document.querySelector('.items');
+      const sliderObject = {
+        slider: document.querySelector('.items'),
+        // false = NOT currently clicking:
+        isDown: false,
+        setScrollLeft: '',
+        startX: '',
+        init: () => {
+          sliderObject.slider.addEventListener('mousedown', (e) => {
+            sliderObject.isDown = true; // Activate dragging.
+            sliderObject.slider.classList.add('active');
 
-        let isDown = false; // false = NOT currently clicking
-        let startX;
-        let scrollLeft;
+            // When user first clicks down, record the location:
+            sliderObject.startX = e.pageX - sliderObject.slider.offsetLeft; // Compensate for any margin between the page and the slider.
 
-        slider.addEventListener('mousedown', (e) => {
-          isDown = true; // Activate dragging.
-          slider.classList.add('active');
+            // Also compensate for the position of the slider, which may already have been repositioned:
+            sliderObject.setScrollLeft = sliderObject.slider.scrollLeft;
+          });
 
-          // When user first clicks down, record the location:
-          startX = e.pageX - slider.offsetLeft; // Compensate for any margin between the page and the slider.
+          sliderObject.slider.addEventListener('mouseleave', () => {
+            sliderObject.isDown = false; // When the mouse leaves the area, stop dragging.
+            sliderObject.slider.classList.remove('active');
+          });
 
-           // Also compensate for the position of the slider, which may already have been repositioned:
-          scrollLeft = slider.scrollLeft;
-        });
+          sliderObject.slider.addEventListener('mouseup', () => {
+            sliderObject.isDown = false; // When mouse is released, stop dragging.
+            sliderObject.slider.classList.remove('active');
+          });
 
-        slider.addEventListener('mouseleave', () => {
-          isDown = false; // When the mouse leaves the area, stop dragging.
-          slider.classList.remove('active');
-        });
+          sliderObject.slider.addEventListener('mousemove', (e) => {
+            // Only operate when user is clicking:
+            if (sliderObject.isDown) {
+              e.preventDefault(); // Prevent selection of text, etc.
 
-        slider.addEventListener('mouseup', () => {
-          isDown = false; // When mouse is released, stop dragging.
-          slider.classList.remove('active');
-        });
+              // Get the mouse's position as it is moved:
+              const x = e.pageX - sliderObject.slider.offsetLeft; // Compensate for any margin between the page and the slider.
 
-        slider.addEventListener('mousemove', (e) => {
-          // Only operate when user is clicking:
-          if (isDown) {
-            e.preventDefault(); // Prevent selection of text, etc.
+              // Calculate how far we have deviated from the starting point:
+              const walk = x - sliderObject.startX;
 
-            // Get the mouse's position as it is moved:
-            const x = e.pageX - slider.offsetLeft; // Compensate for any margin between the page and the slider.
+              // Set the slider's scrollLeft position to the slider's starting position, minus the deviance from that starting position. Allows for smooth dragging:
+              sliderObject.slider.scrollLeft = sliderObject.setScrollLeft - walk;
+            }
+          });
+        }
+      }
 
-            // Calculate how far we have deviated from the starting point:
-            const walk = x - startX;
-
-             // Set the slider's scrollLeft position to the slider's starting position, minus the deviance from that starting position. Allows for smooth dragging:
-            slider.scrollLeft = scrollLeft - walk;
-          }
-        });
+      sliderObject.init();
 
     </script>
 
