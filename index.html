@@ -34,8 +34,52 @@
     <div class="item item25">25</div>
   </div>
 
-<script>
-</script>
+    <script>
 
-  </body>
+        const slider = document.querySelector('.items');
+
+        let isDown = false; // false = NOT currently clicking
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+          isDown = true; // Activate dragging.
+          slider.classList.add('active');
+
+          // When user first clicks down, record the location:
+          startX = e.pageX - slider.offsetLeft; // Compensate for any margin between the page and the slider.
+
+           // Also compensate for the position of the slider, which may already have been repositioned:
+          scrollLeft = slider.scrollLeft;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+          isDown = false; // When the mouse leaves the area, stop dragging.
+          slider.classList.remove('active');
+        });
+
+        slider.addEventListener('mouseup', () => {
+          isDown = false; // When mouse is released, stop dragging.
+          slider.classList.remove('active');
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+          // Only operate when user is clicking:
+          if (isDown) {
+            e.preventDefault(); // Prevent selection of text, etc.
+
+            // Get the mouse's position as it is moved:
+            const x = e.pageX - slider.offsetLeft; // Compensate for any margin between the page and the slider.
+
+            // Calculate how far we have deviated from the starting point:
+            const walk = x - startX;
+
+             // Set the slider's scrollLeft position to the slider's starting position, minus the deviance from that starting position. Allows for smooth dragging:
+            slider.scrollLeft = scrollLeft - walk;
+          }
+        });
+
+    </script>
+
+</body>
 </html>

@@ -1,1 +1,1 @@
-# js30-27-click-and-drag-to-scroll
+# JavaScript 30 #27: Click and Drag to Scroll
